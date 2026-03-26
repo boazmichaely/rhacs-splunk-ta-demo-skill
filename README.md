@@ -4,7 +4,13 @@ Cursor **Agent Skill** for standing up a **lab Splunk** instance on **OpenShift*
 
 This repository intentionally contains **no credentials, tokens, cluster hostnames, or customer-specific data**—only procedural guidance and generic command examples.
 
-**Layout:** Keep the git repo under the Cursor skills tree so one directory is both the published skill and the clone you iterate on, e.g. **`~/.cursor/skills/rhacs-splunk-ta-demo-skill/`**. Contributors may clone to any path and copy `SKILL.md` + `REFERENCE.md` into that folder pattern on their machine.
+**Two different places on disk:**
+
+1. **This repo (skill only):** `~/.cursor/skills/rhacs-splunk-ta-demo-skill/` — just `SKILL.md`, `REFERENCE.md`, this `README`, and `.gitignore`. Safe to push to GitHub. Iterate the *published* workflow here.
+
+2. **Lab / discovery workspace (separate):** e.g. `~/code/Splunk/` — plans, integration notes, `install_rhacs_ta.sh`, Splunkbase `.tgz`, scratch commands, **cluster-specific examples**. Do **not** mix those files into this repo; keep them out of git for this skill.
+
+Contributors may clone this repo to any path; to use it as a Cursor skill, copy or symlink so `SKILL.md` lives under `~/.cursor/skills/<name>/`.
 
 ## Install the skill in Cursor
 

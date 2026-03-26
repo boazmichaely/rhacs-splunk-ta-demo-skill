@@ -1,46 +1,46 @@
-# rhacs-splunk-ta-demo-skill
+# RHACS Splunk TA demo (Cursor skill)
 
-Cursor **Agent Skill** for standing up a **lab Splunk** instance on **OpenShift** (Splunk Operator + Standalone, Splunk Free) and wiring **Red Hat Advanced Cluster Security (RHACS/ACS)** using the official [**Splunkbase Technology Add-on** (app 5315)](https://splunkbase.splunk.com/app/5315).
+## What this skill does
 
-This repository intentionally contains **no credentials, tokens, cluster hostnames, or customer-specific data**—only procedural guidance and generic command examples.
+Cursor skill for a **lab Splunk** on **OpenShift** (Splunk Operator, Standalone, Splunk Free) with **RHACS** via the [Splunkbase TA (5315)](https://splunkbase.splunk.com/app/5315): preflight, install, Route/TLS, TA install, Violations input, quick checks. Not for production.
 
-**Two different places on disk:**
+## Cluster requirements
 
-1. **This repo (skill only):** `~/.cursor/skills/rhacs-splunk-ta-demo-skill/` — just `SKILL.md`, `REFERENCE.md`, this `README`, and `.gitignore`. Safe to push to GitHub. Iterate the *published* workflow here.
+- An OpenShift cluster you may use for a **lab** (not production).
+- **`cluster-admin`** on that cluster for the identity you use with **`oc login`** (installing the Splunk Operator pulls CRDs and cluster-scoped objects).
 
-2. **Lab / discovery workspace (separate):** e.g. `~/code/Splunk/` — plans, integration notes, `install_rhacs_ta.sh`, Splunkbase `.tgz`, scratch commands, **cluster-specific examples**. Do **not** mix those files into this repo; keep them out of git for this skill.
+**Sizing and storage** (matches the lab `Standalone` in `REFERENCE.md`; adjust if pods won’t schedule):
 
-Contributors may clone this repo to any path; to use it as a Cursor skill, copy or symlink so `SKILL.md` lives under `~/.cursor/skills/<name>/`.
+- **PVCs:** two **ReadWriteOnce** volumes—**10Gi** (Splunk `etc`) and **20Gi** (`var`). You need a **StorageClass** that can provision them (`oc get storageclass`).
+- **Splunk pod:** **500m–2** CPUs and **4–6Gi** memory (requests/limits in the reference manifest). Budget extra on the cluster for the Splunk Operator controller.
 
-## Install the skill in Cursor
+For the RHACS add-on: a Splunkbase account to download the TA from [https://splunkbase.splunk.com/app/5315](https://splunkbase.splunk.com/app/5315), RHACS Central reachable from the cluster, and an API token for the TA.
 
-Ensure this folder is on disk so Cursor can load `SKILL.md`:
+## What you need locally
 
-- **Personal (all projects):** `~/.cursor/skills/rhacs-splunk-ta-demo-skill/SKILL.md`  
-  Recommended layout:
-  ```text
-  ~/.cursor/skills/rhacs-splunk-ta-demo-skill/
-    SKILL.md
-    REFERENCE.md
-  ```
+- **Cursor** (Agent / skills)
+- **`oc`** logged into the cluster
+- **`helm`** (Splunk Operator is installed with Helm)
 
-Restart Cursor or reload if skills are cached. The skill description in `SKILL.md` frontmatter drives when the agent applies it.
+You do not need to publish this repo to use it.
 
-## Contents
+## Install the skill
 
-| File | Purpose |
-|------|---------|
-| `SKILL.md` | Workflow: preflight → deploy → TA → Violations input → verification |
-| `REFERENCE.md` | Copy-paste command blocks (placeholders for storage class, namespace, paths) |
+1. Clone or copy the repo.
+2. Place it under `~/.cursor/skills/` so `SKILL.md` is at the folder root, with `REFERENCE.md` beside it.
+3. Restart Cursor (or reload the window).
 
-## Security & contributions
+## Use the skill
 
-- **Do not** commit Splunk/RHACS passwords, API tokens, HEC tokens, kubeconfigs, or internal URLs.
-- Before opening a PR or pushing, search the diff for accidental secrets (passwords, bearer tokens, company domains).
-- Upsell **Splunk General Terms** / **Splunkbase** / **Red Hat** licensing applies to upstream software; this repo is documentation only.
+In Agent chat, say what you want (preflight only, full deploy, TA, TLS, etc.). The agent follows `SKILL.md` and pulls commands from `REFERENCE.md`. Use your cluster’s storage class and paths; do not commit passwords or tokens.
+
+## Files
+
+- **`SKILL.md`** — Workflow and TA/verification guidance.
+- **`REFERENCE.md`** — Command blocks (`oc`, Helm, etc.).
 
 ## References
 
 - [Red Hat ACS — Integrating with Splunk](https://docs.openshift.com/acs/4.6/integration/integrate-with-splunk.html)
 - [Splunk Operator for Kubernetes](https://splunk.github.io/splunk-operator/)
-- [Splunkbase — RHACS TA](https://splunkbase.splunk.com/app/5315)
+- [Splunkbase — RHACS Technology Add-on](https://splunkbase.splunk.com/app/5315)

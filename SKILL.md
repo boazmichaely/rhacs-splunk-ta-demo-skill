@@ -14,19 +14,19 @@ description: >-
 
 ## When this skill applies
 
-User wants a **non-production** Splunk on **OpenShift** they can log into, optionally wired to **RHACS/ACS** with the **Splunkbase TA** ([app 5315](https://splunkbase.splunk.com/app/5315)).
+User wants a **non-production** Splunk on **OpenShift** they can log into, with **RHACS/ACS** via the **Splunkbase TA** ([app 5315](https://splunkbase.splunk.com/app/5315)).
 
 ## Response pattern
 
-1. **Short plan** (condensed): namespace → CRDs → Helm operator (EULA + image pin) → SCC → `Standalone` (Free license) → Route → optional TA → Violations input → verify search.
-2. **Preconditions**: confirm `oc`/`kubectl` context; user is logged in; intent (lab only). If deploy requested, confirm **cluster-admin** or sufficient rights for CRDs/cluster-scope Helm.
+1. **Short plan** (condensed): namespace → CRDs → Helm operator (EULA + image pin) → SCC → `Standalone` (Free license) → Route → RHACS TA → Violations input → verify search.
+2. **Preconditions**: confirm `oc` context; user is logged in; intent (lab only). If deploy requested, confirm **cluster-admin** or sufficient rights for CRDs/cluster-scope Helm.
 3. **Preflight** (execute read-only checks; report blockers): identity, OCP/Kube version, nodes + allocatable CPU/RAM, default `StorageClass`, `helm`, SCCs (`nonroot-v2` on OCP 4.14+), metrics if available. Note **Splunk Operator** quirks: CRD bundle may be GitHub **3.0.0** while Helm chart is **3.1.x**; **operator image** tag **3.1.0** may be missing on Docker Hub — pin **`docker.io/splunk/splunk-operator:3.0.0`** when pulls fail.
 4. **Deploy** (only if user asks to proceed): follow the command sequence in [REFERENCE.md](REFERENCE.md); use namespace **`splunk-demo`** unless user overrides; patch Route **edge TLS** if `https://` returns 503 while `http://` works.
-5. **RHACS TA**: Splunkbase is **login-gated** — **prompt user to download** the `.tgz` or `.spl` to a path they provide. Then `oc cp` + `splunk install app` + `splunk restart` (see REFERENCE). **Never log or commit** the Splunk `admin` password or RHACS API token.
+5. **RHACS TA**: Splunkbase is **login-gated** — **prompt user to download** the `.tgz` to a path they provide. Then `oc cp` + `splunk install app` + `splunk restart` (see REFERENCE). **Never log or commit** the Splunk `admin` password or RHACS API token.
 6. **TA configuration (Violations)**:
    - **Configuration** tab: **Central endpoint** = **hostname:443** only (example pattern: `central-<something>.apps.<cluster-apps-domain>:443`). Do **not** prefix `https://` in the field unless the TA explicitly requires it—the add-on typically builds `https://` when calling Central.
    - **API token**: RHACS token with broad **read** access (e.g. **Analyst** role per Red Hat docs). Obtain from the user; do not embed in repo files.
-   - **Inputs → Violations**: **Interval** (e.g. 60s); **Index** = real index name or UI default **`default`** (not `*`); **`from_checkpoint`**: default **`2000-01-01T00:00:00.000Z`** for initial backfill (RFC3339 UTC), per TA `globalConfig.json`.
+   - **Inputs → Violations**: keep **defaults**—interval **60s**, index **`default`**, from checkpoint **`2000-01-01T00:00:00.000Z`** (UTC).
    - **UI “Status: false”** is often misleading; trust **TA debug logs** and **search results**.
 7. **Verify**:
    - TA log on Splunk pod: `/opt/splunk/var/log/splunk/stackrox_violations_*.log` — look for `ERROR` and successful GETs to `/api/splunk/ta/violations`.

@@ -21,7 +21,7 @@ oc adm top nodes 2>/dev/null || true
 
 ```bash
 oc new-project splunk-demo || oc project splunk-demo
-kubectl apply -f https://github.com/splunk/splunk-operator/releases/download/3.0.0/splunk-operator-crds.yaml --server-side
+oc apply -f https://github.com/splunk/splunk-operator/releases/download/3.0.0/splunk-operator-crds.yaml --server-side
 oc adm policy add-scc-to-user nonroot-v2 -z splunk-operator-controller-manager -n splunk-demo
 oc adm policy add-scc-to-user nonroot-v2 -z default -n splunk-demo
 ```
@@ -73,7 +73,7 @@ spec:
 EOF
 ```
 
-Replace **`YOUR_STORAGE_CLASS`** before apply (or use `kubectl patch` / re-apply). Then:
+Replace **`YOUR_STORAGE_CLASS`** before apply (or use `oc patch` / re-apply). Then:
 
 ```bash
 oc wait --for=condition=ready pod -l app.kubernetes.io/instance=splunk-lab-standalone -n splunk-demo --timeout=600s

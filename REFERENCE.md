@@ -26,6 +26,8 @@ oc adm policy add-scc-to-user nonroot-v2 -z splunk-operator-controller-manager -
 oc adm policy add-scc-to-user nonroot-v2 -z default -n splunk-demo
 ```
 
+If either **`add-scc-to-user`** line errors because the **service account** does not exist yet, run the **Helm** block below first, then **repeat** the two **`oc adm policy add-scc-to-user`** lines.
+
 **Helm** (Splunk 10.x requires General Terms acceptance; **override operator image** if the chart’s default tag is not published on Docker Hub):
 
 ```bash
@@ -94,10 +96,10 @@ oc get secret splunk-lab-standalone-secret-v1 -n splunk-demo -o go-template='{{i
 
 ## RHACS Technology Add-on install (after user download)
 
-User must download from [Splunkbase app 5315](https://splunkbase.splunk.com/app/5315). Use the actual filename Splunkbase provides.
+User must download from [Splunkbase app 5315](https://splunkbase.splunk.com/app/5315). **README** / **SKILL** assume the **`.tgz`** lives on the **`oc` workstation** under **`~/code/Splunk/`** (same filename Splunkbase provides, including any version suffix). Set **`TA_LOCAL`** to that path, or override if you stored the archive elsewhere.
 
 ```bash
-TA_LOCAL=/path/to/red-hat-advanced-cluster-security-splunk-technology-add-on.tgz
+TA_LOCAL="${HOME}/code/Splunk/red-hat-advanced-cluster-security-splunk-technology-add-on.tgz"
 NS=splunk-demo
 POD=splunk-lab-standalone-0
 REMOTE=/tmp/rhacs_ta.tgz
@@ -106,6 +108,8 @@ ADMIN_PASS="$(oc get secret splunk-lab-standalone-secret-v1 -n "$NS" -o jsonpath
 oc exec -n "$NS" "$POD" -- /opt/splunk/bin/splunk install app "$REMOTE" -auth "admin:${ADMIN_PASS}" -update 1
 oc exec -n "$NS" "$POD" -- /opt/splunk/bin/splunk restart
 ```
+
+**`splunk restart`:** the **`oc exec`** session often **disconnects** or exits **non-zero** while `splunkd` restarts. Wait until **`oc get pod "$POD" -n "$NS"`** shows **Ready**, then open Splunk Web again.
 
 Installed app directory is commonly **`TA-stackrox`**. Settings file:
 
@@ -117,6 +121,8 @@ Installed app directory is commonly **`TA-stackrox`**. Settings file:
 oc exec -n splunk-demo splunk-lab-standalone-0 -- ls -la /opt/splunk/var/log/splunk/stackrox*.log
 oc exec -n splunk-demo splunk-lab-standalone-0 -- tail -100 /opt/splunk/var/log/splunk/stackrox_violations_*.log
 ```
+
+**ACS Compliance** and **ACS Vulnerability Management** inputs may log under different **`stackrox*.log`** names in the same directory—list with **`ls`** and tail the file that matches the input you are debugging.
 
 ## Discover RHACS Central route
 

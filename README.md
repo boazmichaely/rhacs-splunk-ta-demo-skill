@@ -7,7 +7,7 @@ This skill helps you stand up a **small Splunk Enterprise lab on OpenShift** and
 There are **two** concrete outcomes:
 
 1. **Splunk on the cluster** — Splunk Operator (Helm), a **Standalone** instance (Splunk Free), **PVCs**, and a **Route** to Splunk Web so people can log in with a browser.
-2. **Red Hat Advanced Cluster Security in Splunk** — the Splunkbase **.tgz** is installed into Splunk; in the UI the add-on appears under **Apps** as **Red Hat Advanced Cluster Security**. You then point it at **RHACS Central** (hostname + port), paste an **API token**, and turn on the **Violations** input so events show up in search.
+2. **Red Hat Advanced Cluster Security in Splunk** — the Splunkbase **.tgz** is installed into Splunk; in the UI the add-on appears under **Apps** as **Red Hat Advanced Cluster Security**. You then set **Central endpoint** and an **API token**, and enable modular inputs for **ACS Compliance**, **ACS Vulnerability Management**, and **ACS Violations** so data lands in indexes and search.
 
 Everything here is for **learning and demos**, not a production hardening guide.
 
@@ -38,7 +38,7 @@ The Splunk add-on calls **RHACS Central** over HTTPS with an **API token** (some
 2. Create an API token from **Integrations → Authentication**. Name it (e.g. **`splunk-lab`**). Assign the **Analyst** role (the role must have **read** access).
 3. **Copy the API key** when it is shown (Central will not show it again).
 
-Paste the token only into **Splunk** in **Configuration → Add-on Settings** when you follow [**Getting started with Splunk using the TA**](#getting-started-with-splunk-using-the-ta) below (step **2**). You may share it with the agent in chat instead if you accept that risk—never commit it to git. Details: [Red Hat ACS — Integrating with Splunk](https://docs.openshift.com/acs/4.6/integration/integrate-with-splunk.html).
+Paste the token only into **Splunk** in **Configuration → Add-on Settings** when you follow [**Getting started with Splunk using the TA**](#getting-started-with-splunk-using-the-ta) below (**subsection 2 — Connect to RHACS Central**). You may share it with the agent in chat instead if you accept that risk—never commit it to git. Details: [Red Hat ACS — Integrating with Splunk](https://docs.openshift.com/acs/4.6/integration/integrate-with-splunk.html). If your ACS version differs, use the **Integrating with Splunk** topic for that release; menu labels can shift between versions.
 
 ## What you need locally
 
@@ -76,11 +76,11 @@ In **Splunk Web**, open **Apps** and select **Red Hat Advanced Cluster Security*
 
 ### 2. Connect to RHACS Central (endpoint + API token)
 
-1. In the add-on, open **Configuration** (top tabs).
-2. Open **Add-on Settings** (sub-tab).
-3. Set **Central endpoint** to your RHACS Central hostname **with port** (example pattern: `central-<route>.apps.<cluster-apps-domain>:443`, or the hostname your topology uses, plus **`:443`**). Use the form **host:port**; do not add **`https://`** unless the add-on’s help text tells you to—the add-on usually builds TLS when calling Central.
-4. Paste the **API token** from RHACS (see **RHACS API token** above). Tokens are created under **Integrations → Authentication** in Central.
-5. Click **Save**.
+a. In the add-on, open **Configuration** (top tabs).  
+b. Open **Add-on Settings** (sub-tab).  
+c. Set **Central endpoint** to the hostname and port Splunk should use to reach RHACS Central, usually **`:443`**, in the form **host:port** (no **`https://`** prefix unless the add-on’s help says otherwise). Examples: `central-<route>.apps.<cluster-apps-domain>:443`, or an operator-specific hostname from your cluster’s Central **Route**. To discover candidates from OpenShift, use the command block **[Discover RHACS Central route](REFERENCE.md#discover-rhacs-central-route)** in **`REFERENCE.md`** (`oc get routes -A | grep -i central`) and pick a host the **Splunk pod** can reach on the network.  
+d. Paste the **API token** from RHACS (see **RHACS API token** above). Tokens are created under **Integrations → Authentication** in Central.  
+e. Click **Save**.
 
 ![Add-on Settings: Central endpoint and API token](docs/ta-configuration-addon-settings.png)
 
@@ -101,7 +101,7 @@ Use **Search** in Splunk to confirm events (e.g. `index=default` or `index=*` wi
 
 **Splunk UI vs app directory:** The UI shows **Red Hat Advanced Cluster Security**; on the Splunk instance files for this Splunkbase package live under **`/opt/splunk/etc/apps/TA-stackrox/`**. That directory name is normal for CLI paths and log filenames.
 
-### 5. Troubleshooting Splunk installation
+### 5. Troubleshooting Splunk Web and the add-on
 
 **Splunk Web — Home and Edge Processor (Splunk 10):** **Home** can loop on an **Edge Processor** “First-time setup” page; **Cancel** may not clear it. This lab does **not** require Edge Processor. Open **Search & Reporting** directly:
 
@@ -109,7 +109,9 @@ Use **Search** in Splunk to confirm events (e.g. `index=default` or `index=*` wi
 
 or **Apps → Search & Reporting**. Optionally set **Settings → User preferences → Default application** to **Search & Reporting** so login skips the launcher.
 
-**Inputs or add-on errors:** Use **`oc exec`** on **`splunk-lab-standalone-0`** and tail files under **`/opt/splunk/var/log/splunk/`** (see **`REFERENCE.md`**). For Central connectivity, re-check **Central endpoint** format and token scope in RHACS.
+**`splunk restart` from `oc exec`:** the client may **disconnect** or show a **non-zero** exit while Splunk stops and starts; check **`oc get pod`** until **`splunk-lab-standalone-0`** is **Ready**, then log into Splunk Web again.
+
+**Inputs or add-on errors:** Use **`oc exec`** on **`splunk-lab-standalone-0`** and tail files under **`/opt/splunk/var/log/splunk/`** (see **`REFERENCE.md`** → **TA troubleshooting**). For Central connectivity, re-check **Central endpoint** format (and **[Discover RHACS Central route](REFERENCE.md#discover-rhacs-central-route)**) and token scope in RHACS.
 
 ## Files in this repository
 
@@ -124,6 +126,6 @@ or **Apps → Search & Reporting**. Optionally set **Settings → User preferenc
 
 ## References
 
-- [Red Hat ACS — Integrating with Splunk](https://docs.openshift.com/acs/4.6/integration/integrate-with-splunk.html)
+- [Red Hat ACS — Integrating with Splunk](https://docs.openshift.com/acs/4.6/integration/integrate-with-splunk.html) (ACS **4.6** example; use the doc version that matches your RHACS release if menus or APIs differ.)
 - [Splunk Operator for Kubernetes](https://splunk.github.io/splunk-operator/)
 - [Splunkbase — Red Hat Advanced Cluster Security Splunk Technology Add-on](https://splunkbase.splunk.com/app/5315)

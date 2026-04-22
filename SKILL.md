@@ -37,7 +37,7 @@ User wants a **non-production** Splunk on **OpenShift** they can log into, with 
    - **Violations:** on the Splunk pod, `/opt/splunk/var/log/splunk/stackrox_violations_*.log` — look for `ERROR` and successful GETs to `/api/splunk/ta/violations`.
    - **Compliance / Vulnerability Management:** other **`stackrox*.log`** files may appear under `/opt/splunk/var/log/splunk/`—list and tail the file that matches the input under test (see **REFERENCE.md** TA troubleshooting).
    - **Search**: `index=* sourcetype="stackrox*"` (or `index=default` / `index=main` if events land there); adjust `sourcetype` if the TA uses different names for non-violations data.
-8. **Docs**: [RHACS Splunk integration](https://docs.openshift.com/acs/4.6/integration/integrate-with-splunk.html) — use the doc revision that matches the user’s ACS version when possible; TA compatibility on Splunkbase may list **9.x**; **Splunk 10** may still work — note install risk briefly.
+8. **Docs**: [RHACS Splunk integration](https://docs.redhat.com/en/documentation/red_hat_advanced_cluster_security_for_kubernetes/4.10/html/integrating/integrate-with-splunk) (RHACS **4.10**; use the matching doc version when the user’s cluster differs); TA compatibility on Splunkbase may list **9.x**; **Splunk 10** may still work — note install risk briefly.
 
 **Splunk Free:** multi-user roles are limited; sharing **`admin`** is the typical lab pattern—retrieve password only via `oc` from the user’s cluster; never store it in git.
 

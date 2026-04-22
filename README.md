@@ -57,6 +57,20 @@ Say the lines below (or close paraphrases) in **Cursor Agent** chat after the sk
 
 Replace paths, namespace, and pod name if yours differ. Do not paste **RHACS tokens** or **Splunk admin passwords** into the repository.
 
+## Splunk Web: Home vs Edge Processor “First-time setup”
+
+On **Splunk 10** (and recent Enterprise), **Home** can open an **Edge Processor** first-time page. **Cancel** often sends you back to the same screen because the launcher still wants that flow.
+
+**Use Splunk without that wizard:** open **Search & Reporting** directly:
+
+`https://<your-splunk-route-host>/en-US/app/search/search`
+
+or **Apps → Search & Reporting**. Optionally set **Settings → User preferences → Default application** to **Search & Reporting** so you land in Search after login. You do **not** need Edge Processor for the RHACS TA lab.
+
+## Install the RHACS TA (CLI summary)
+
+Download the `.tgz` from [Splunkbase app 5315](https://splunkbase.splunk.com/app/5315). On the machine where **`oc`** runs, copy the archive into pod **`splunk-lab-standalone-0`** in **`splunk-demo`**, install with **`splunk install app`**, then **`splunk restart`**—full commands and variables are in **`REFERENCE.md`** (RHACS Technology Add-on section). Example: set `TA_LOCAL` to your file path, then run the `oc cp` / `oc exec` … `install app` / `restart` block.
+
 ## Files
 
 - **`SKILL.md`** — Workflow and TA/verification guidance.

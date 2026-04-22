@@ -15,18 +15,15 @@ Everything here is for **learning and demos**, not a production hardening guide.
 
 Install the skill folder under `~/.cursor/skills/` (see below). In **Agent** chat, describe what you want in plain English. The agent follows **`SKILL.md`** (workflow, TA fields, pitfalls) and runs or prints the command blocks in **`REFERENCE.md`** (`oc`, Helm, Splunk CLI). You supply cluster-specific values (storage class, paths to the downloaded **.tgz**, secrets).
 
-## End-to-end flow
+## End-to-end flow (three asks)
 
-| Step | What happens |
-|------|----------------|
-| **1. Preflight** | Read-only checks: OpenShift version, nodes, **StorageClass**, **SCCs** (`nonroot-v2`), Helm, whether you can create **CRDs**. |
-| **2. Deploy Splunk** | Create **`splunk-demo`** (or your namespace), apply Splunk Operator **CRDs**, bind SCCs, **Helm install** the operator, apply the **Standalone** CR (disk + CPU/RAM), wait for the pod, **expose** Splunk Web on a **Route** with **edge TLS** if needed. |
-| **3. Log into Splunk Web** | Get the **admin** password from an OpenShift **Secret** (`REFERENCE.md`); open the **https://** Route URL. |
-| **4. Install the add-on** | Download the **.tgz** from Splunkbase (login required). From the machine with **`oc`**: copy the file into **`splunk-lab-standalone-0`**, run **`splunk install app`**, then **`splunk restart`** (commands in **`REFERENCE.md`**). |
-| **5. Configure RHACS** | In Splunk, open **Apps → Red Hat Advanced Cluster Security**. Set **Central endpoint**, **API token**, and **Violations** defaults per **`SKILL.md`**. |
-| **6. Verify** | TA logs on the pod and simple searches (`SKILL.md`) to confirm data is flowing. |
+From the skill user’s side it is usually **three** Agent requests:
 
-On the Splunk **filesystem**, the add-on often lives under a directory such as **`TA-stackrox`**; Splunk still lists it in the UI under the product name **Red Hat Advanced Cluster Security**.
+1. **Run a preflight test** — Read-only checks only (`REFERENCE.md`): OpenShift version, nodes, **StorageClass**, **SCCs**, **Helm**, whether you can create **CRDs**. Nothing is installed yet.
+2. **Install Splunk for me** — Operator + **Standalone** (Splunk Free) + **Route** to Splunk Web; you get a URL and the **`oc`** command to read the **admin** password from a **Secret**.
+3. **Install the TA for me** — You download the Splunkbase **.tgz** first, then give the agent the **path** on the machine where **`oc`** runs. The agent copies it into the Splunk pod, runs **`splunk install app`**, and **`splunk restart`**. After that, **Apps** in Splunk Web should list **Red Hat Advanced Cluster Security** (on disk the app dir is often still named **`TA-stackrox`**).
+
+Configuring **Central**, **API token**, and **Violations** in that Splunk app is the next step—you do it in the browser using **`SKILL.md`** as the checklist (or ask the agent to walk the fields).
 
 ## Cluster requirements
 

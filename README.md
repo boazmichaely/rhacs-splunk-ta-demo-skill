@@ -72,7 +72,7 @@ After **`splunk install app`** and a restart, complete the add-on in the Splunk 
 
 In **Splunk Web**, open **Apps** and select **Red Hat Advanced Cluster Security**.
 
-![Splunk Web Apps sidebar listing Red Hat Advanced Cluster Security](docs/splunk-apps-red-hat-advanced-cluster-security.png)
+<table border="1" cellpadding="6"><tr><td align="center"><img src="docs/splunk-apps-red-hat-advanced-cluster-security.png" alt="Splunk Web Apps sidebar listing Red Hat Advanced Cluster Security" /></td></tr></table>
 
 ### 2. Connect to RHACS Central (endpoint + API token)
 
@@ -82,18 +82,18 @@ c. Set **Central endpoint** to the hostname and port Splunk should use to reach 
 d. Paste the **API token** from RHACS (see **RHACS API token** above). Tokens are created under **Integrations → Authentication** in Central.  
 e. Click **Save**.
 
-![Add-on Settings: Central endpoint and API token](docs/ta-configuration-addon-settings.png)
+<table border="1" cellpadding="6"><tr><td align="center"><img src="docs/ta-configuration-addon-settings.png" alt="Add-on Settings: Central endpoint and API token" /></td></tr></table>
 
 ### 3. Create an input for each data source
 
 1. Stay in the add-on and use **Create New Input** (green control with the drop-down).
 2. Add **one modular input per type**: **ACS Compliance**, **ACS Vulnerability Management**, and **ACS Violations**—run the wizard separately for each so all three pipelines exist.
 
-![Create New Input: Compliance, Vulnerability Management, Violations](docs/ta-create-new-input-menu.png)
+<table border="1" cellpadding="6"><tr><td align="center"><img src="docs/ta-create-new-input-menu.png" alt="Create New Input: Compliance, Vulnerability Management, Violations" /></td></tr></table>
 
 3. For each type, accept or adjust **interval**, **index**, and any checkpoint fields as needed for your lab. For **ACS Violations**, the lab defaults match **`SKILL.md`**: **interval** `60`, **index** `default`, **from_checkpoint** `2000-01-01T00:00:00.000Z`, **checkpoint type** **Auto** (example below).
 
-![Add ACS Violations: name, interval, index, checkpoint](docs/ta-add-acs-violations-input.png)
+<table border="1" cellpadding="6"><tr><td align="center"><img src="docs/ta-add-acs-violations-input.png" alt="Add ACS Violations: name, interval, index, checkpoint" /></td></tr></table>
 
 ### 4. Search and logs
 

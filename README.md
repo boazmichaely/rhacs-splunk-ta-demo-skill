@@ -38,7 +38,7 @@ The Splunk add-on calls **RHACS Central** over HTTPS with an **API token** (some
 2. Create an API token from **Integrations → Authentication**. Name it (e.g. **`splunk-lab`**). Assign the **Analyst** role (the role must have **read** access).
 3. **Copy the API key** when it is shown (Central will not show it again).
 
-Paste the token only into **Splunk** (or share with the agent in chat if you accept that)—never commit it to git. Details: [Red Hat ACS — Integrating with Splunk](https://docs.openshift.com/acs/4.6/integration/integrate-with-splunk.html).
+Paste the token only into **Splunk** in **Configuration → Add-on Settings** when you follow [**Getting started with Splunk using the TA**](#getting-started-with-splunk-using-the-ta) below (step **2**). You may share it with the agent in chat instead if you accept that risk—never commit it to git. Details: [Red Hat ACS — Integrating with Splunk](https://docs.openshift.com/acs/4.6/integration/integrate-with-splunk.html).
 
 ## What you need locally
 

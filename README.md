@@ -97,9 +97,19 @@ In **Splunk Web**, open **Apps** and select **Red Hat Advanced Cluster Security*
 
 ### 4. Search and logs
 
-Use **Search** in Splunk to confirm events (e.g. `index=default` or `index=*` with `sourcetype` filters for StackRox—see **`SKILL.md`**). If an input misbehaves, inspect TA logs on the Splunk pod under **`/opt/splunk/var/log/splunk/`** (commands in **`REFERENCE.md`**).
+Use **Search** in Splunk to confirm events (e.g. `index=default` or `index=*` with `sourcetype` filters for StackRox—see **`SKILL.md`**).
 
 **Splunk UI vs app directory:** The UI shows **Red Hat Advanced Cluster Security**; on the Splunk instance files for this Splunkbase package live under **`/opt/splunk/etc/apps/TA-stackrox/`**. That directory name is normal for CLI paths and log filenames.
+
+### 5. Troubleshooting Splunk installation
+
+**Splunk Web — Home and Edge Processor (Splunk 10):** **Home** can loop on an **Edge Processor** “First-time setup” page; **Cancel** may not clear it. This lab does **not** require Edge Processor. Open **Search & Reporting** directly:
+
+`https://<your-splunk-route-host>/en-US/app/search/search`
+
+or **Apps → Search & Reporting**. Optionally set **Settings → User preferences → Default application** to **Search & Reporting** so login skips the launcher.
+
+**Inputs or add-on errors:** Use **`oc exec`** on **`splunk-lab-standalone-0`** and tail files under **`/opt/splunk/var/log/splunk/`** (see **`REFERENCE.md`**). For Central connectivity, re-check **Central endpoint** format and token scope in RHACS.
 
 ## Files in this repository
 
@@ -117,13 +127,3 @@ Use **Search** in Splunk to confirm events (e.g. `index=default` or `index=*` wi
 - [Red Hat ACS — Integrating with Splunk](https://docs.openshift.com/acs/4.6/integration/integrate-with-splunk.html)
 - [Splunk Operator for Kubernetes](https://splunk.github.io/splunk-operator/)
 - [Splunkbase — Red Hat Advanced Cluster Security Splunk Technology Add-on](https://splunkbase.splunk.com/app/5315)
-
-## Troubleshooting
-
-**Splunk Web — Home and Edge Processor (Splunk 10):** **Home** can loop on an **Edge Processor** “First-time setup” page; **Cancel** may not clear it. This lab does **not** require Edge Processor. Open **Search & Reporting** directly:
-
-`https://<your-splunk-route-host>/en-US/app/search/search`
-
-or **Apps → Search & Reporting**. Optionally set **Settings → User preferences → Default application** to **Search & Reporting** so login skips the launcher.
-
-**Add-on or inputs:** Use **`oc exec`** on **`splunk-lab-standalone-0`** and tail files under **`/opt/splunk/var/log/splunk/`** (see **`REFERENCE.md`**). For Central connectivity, re-check **Central endpoint** format and token scope in RHACS.

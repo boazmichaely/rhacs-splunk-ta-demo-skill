@@ -35,9 +35,8 @@ This repository does not ship the **`.tgz`** (Splunkbase login and license terms
 The Splunk add-on calls **RHACS Central** over HTTPS with an **API token** (some UIs say “API key”).
 
 1. Log into **RHACS Central** in a browser.
-2. From your **user / profile** area, open **API tokens** (labels vary slightly by ACS version).
-3. **Create** a token, name it (e.g. `splunk-lab`), **copy it once** when shown.
-4. Prefer a role with **read** access to the data the add-on queries (Red Hat’s Splunk integration example uses an **Analyst**-style token).
+2. Create an API token from **Integrations → Authentication**. Name it (e.g. **`splunk-lab`**). Assign the **Analyst** role (the role must have **read** access).
+3. **Copy the API key** when it is shown (Central will not show it again).
 
 Paste the token only into **Splunk** (or share with the agent in chat if you accept that)—never commit it to git. Details: [Red Hat ACS — Integrating with Splunk](https://docs.openshift.com/acs/4.6/integration/integrate-with-splunk.html).
 
@@ -80,7 +79,7 @@ In **Splunk Web**, open **Apps** and select **Red Hat Advanced Cluster Security*
 1. In the add-on, open **Configuration** (top tabs).
 2. Open **Add-on Settings** (sub-tab).
 3. Set **Central endpoint** to your RHACS Central hostname **with port** (example pattern: `central-<route>.apps.<cluster-apps-domain>:443`, or the hostname your topology uses, plus **`:443`**). Use the form **host:port**; do not add **`https://`** unless the add-on’s help text tells you to—the add-on usually builds TLS when calling Central.
-4. Paste the **API token** from RHACS (see **RHACS API token** above). The UI may reference generating a token under **Platform Configuration → Integrations → API Token** in Central—paths can vary by ACS version.
+4. Paste the **API token** from RHACS (see **RHACS API token** above). Tokens are created under **Integrations → Authentication** in Central.
 5. Click **Save**.
 
 ![Add-on Settings: Central endpoint and API token](docs/ta-configuration-addon-settings.png)

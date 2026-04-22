@@ -27,7 +27,7 @@ User wants a **non-production** Splunk on **OpenShift** they can log into, with 
 5. **RHACS TA**: Splunkbase is **login-gated** — user downloads the `.tgz`. For a minimal **“Install the TA for me”** ask, assume **`~/code/Splunk/`** on the **`oc` workstation** (README): use the Splunkbase **`.tgz`** there; if missing or ambiguous, ask once for the full path. Then `oc cp` + `splunk install app` + `splunk restart` (see REFERENCE). **Never log or commit** the Splunk `admin` password or RHACS API token.
 6. **TA configuration (Violations)**:
    - **Configuration** tab: **Central endpoint** = **hostname:443** only (example pattern: `central-<something>.apps.<cluster-apps-domain>:443`). Do **not** prefix `https://` in the field unless the TA explicitly requires it—the add-on typically builds `https://` when calling Central.
-   - **API token**: RHACS token with broad **read** access (e.g. **Analyst** role per Red Hat docs). Obtain from the user; do not embed in repo files.
+   - **API token**: Create in RHACS Central under **Integrations → Authentication**; use **Analyst** (read access). User copies the key when shown; do not embed in repo files.
    - **Inputs → Violations**: keep **defaults**—interval **60s**, index **`default`**, from checkpoint **`2000-01-01T00:00:00.000Z`** (UTC).
    - **UI “Status: false”** is often misleading; trust **TA debug logs** and **search results**.
 7. **Verify**:

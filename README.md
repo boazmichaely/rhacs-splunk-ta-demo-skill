@@ -11,20 +11,6 @@ There are **two** concrete outcomes:
 
 Everything here is for **learning and demos**, not a production hardening guide.
 
-## How you use this in Cursor
-
-Install the skill folder under `~/.cursor/skills/` (see below). In **Agent** chat, describe what you want in plain English. The agent follows **`SKILL.md`** (workflow, TA fields, pitfalls) and runs or prints the command blocks in **`REFERENCE.md`** (`oc`, Helm, Splunk CLI). You supply cluster-specific values (storage class, paths to the downloaded **.tgz**, secrets).
-
-## End-to-end flow (three asks)
-
-From the skill user’s side it is usually **three** Agent requests:
-
-1. **Run a preflight test** — Read-only checks only (`REFERENCE.md`): OpenShift version, nodes, **StorageClass**, **SCCs**, **Helm**, whether you can create **CRDs**. Nothing is installed yet.
-2. **Install Splunk for me** — Operator + **Standalone** (Splunk Free) + **Route** to Splunk Web; you get a URL and the **`oc`** command to read the **admin** password from a **Secret**.
-3. **Install the TA for me** — You download the Splunkbase **.tgz** first, then give the agent the **path** on the machine where **`oc`** runs. The agent copies it into the Splunk pod, runs **`splunk install app`**, and **`splunk restart`**. After that, **Apps** in Splunk Web should list **Red Hat Advanced Cluster Security** (on disk the app dir is often still named **`TA-stackrox`**).
-
-Configuring **Central**, **API token**, and **Violations** in that Splunk app is the next step—you do it in the browser using **`SKILL.md`** as the checklist (or ask the agent to walk the fields).
-
 ## Cluster requirements
 
 - OpenShift cluster you may use for a **lab** (not production).
@@ -61,18 +47,17 @@ Paste the token only into **Splunk** (or share with the agent in chat if you acc
 2. Copy or symlink so **`SKILL.md`** and **`REFERENCE.md`** sit together under e.g. `~/.cursor/skills/rhacs-splunk-ta-demo-skill/`.
 3. Restart Cursor (or reload the window).
 
-## Example Agent prompts
+## Agent flow (three prompts)
 
-| Say this | You get | What that gives you |
-|----------|---------|----------------------|
-| “Run **read-only preflight** for the Splunk-on-OpenShift lab from my rhacs-splunk-ta-demo-skill; don’t install anything yet.” | `oc` / **helm** checks from **`REFERENCE.md`**. | Whether storage, **SCCs**, and **CRD** rights look viable **before** you install anything. |
-| “**Deploy lab Splunk** in `splunk-demo` following **REFERENCE.md** (operator, Standalone Free, Route). I’m cluster-admin.” | Ordered **CRD → Helm → Standalone → Route** steps. | A **Splunk Web** URL and the **`oc`** command to read the **admin** password from a **Secret**. |
-| “Splunk **HTTPS** on the Route returns **503** but HTTP works—apply the **edge TLS** fix from the skill.” | **`oc patch`** on the **Route**. | **https://** works for users behind the OpenShift edge. |
-| “Install the Splunkbase **.tgz** from **`<path>`** on **`splunk-lab-standalone-0`** in **`splunk-demo`** and restart Splunk.” | **`oc cp`**, **`splunk install app`**, **`splunk restart`**. | After restart, **Apps** lists **Red Hat Advanced Cluster Security**; open it to set **Central**, token, and **Violations**. |
-| “What **Central hostname** and **Violations** defaults should I use? I’ll paste the token only in Splunk.” | Field guidance from **`SKILL.md`**. | Correct **host:443** format (no stray **`https://`** in the field if the add-on builds it), sane interval / index / checkpoint. |
-| “How do I **verify** violations are landing in Splunk?” | Log paths on the pod and example **searches**. | Confirms the modular input is calling Central and events are searchable. |
+In **Agent** chat, name this skill (**rhacs-splunk-ta-demo-skill** / Splunk-on-OpenShift lab) so the right **`SKILL.md`** applies. The agent runs or prints commands from **`REFERENCE.md`**. Use these **three** asks **in order**; substitute your **StorageClass** / **namespace** / **.tgz** path / pod name when they differ from the lab defaults.
 
-Replace namespace, pod name, and paths with yours. Do not put **tokens** or **passwords** in this repo.
+| # | Say | Outcome |
+|---|-----|---------|
+| 1 | “**Preflight only** for the Splunk lab in **rhacs-splunk-ta-demo-skill**—read-only checks, **do not install**.” | `oc` / **helm** checks (version, nodes, **StorageClass**, **SCCs**, CRD rights). |
+| 2 | “**Install Splunk** for that lab per **REFERENCE.md** (namespace **`splunk-demo`**, default Standalone sizing).” | Operator + **Standalone** + **Route**; **Splunk Web** URL + **`oc`** to read **admin** password from **Secret**. |
+| 3 | “**Install the Splunkbase TA**: tarball **`/your/path/add-on.tgz`**, namespace **`splunk-demo`**, pod **`splunk-lab-standalone-0`**.” | **`oc cp`**, **`splunk install app`**, **`splunk restart`** → **Apps** shows **Red Hat Advanced Cluster Security** (on disk often **`TA-stackrox`**). |
+
+Then configure **Central**, **API token**, and **Violations** in Splunk Web using **`SKILL.md`**. Do not commit **tokens** or **passwords** to this repo.
 
 ## After install: where to find **Red Hat Advanced Cluster Security**
 

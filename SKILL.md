@@ -8,6 +8,8 @@ description: >-
   Use when the user asks to build a Splunk demo on a cluster, deploy Splunk on
   OpenShift, splunk-demo, Splunk Operator lab, RHACS/ACS Splunk TA demo, or
   connect RHACS to Splunk using the Red Hat ACS Splunk Technology Add-on.
+  Matches short requests such as run a preflight check, install Splunk for me,
+  or install the TA for me (Splunk OpenShift lab defaults).
 ---
 
 # Splunk lab on OpenShift (+ RHACS TA)

@@ -49,13 +49,13 @@ Paste the token only into **Splunk** (or share with the agent in chat if you acc
 
 ## Agent flow (three prompts)
 
-In **Agent** chat, name this skill (**rhacs-splunk-ta-demo-skill** / Splunk-on-OpenShift lab) so the right **`SKILL.md`** applies. The agent runs or prints commands from **`REFERENCE.md`**. Use these **three** asks **in order**; substitute your **StorageClass** / **namespace** / **.tgz** path / pod name when they differ from the lab defaults.
+Say these **in order** in **Agent** chat. They are enough **when this skill is in scope** for the session (skill enabled for the project, `@` mention to the skill if your Cursor build supports it, or you already asked something Splunk/OpenShift–related so the agent loaded **`SKILL.md`**). The agent follows lab **defaults** from **`REFERENCE.md`**: namespace **`splunk-demo`**, Splunk pod **`splunk-lab-standalone-0`**, Standalone sizing and **Splunk Free**; it chooses **StorageClass** from **`oc get storageclass`** (typically the default) unless you overrode that earlier.
 
-| # | Say | Outcome |
-|---|-----|---------|
-| 1 | “**Preflight only** for the Splunk lab in **rhacs-splunk-ta-demo-skill**—read-only checks, **do not install**.” | `oc` / **helm** checks (version, nodes, **StorageClass**, **SCCs**, CRD rights). |
-| 2 | “**Install Splunk** for that lab per **REFERENCE.md** (namespace **`splunk-demo`**, default Standalone sizing).” | Operator + **Standalone** + **Route**; **Splunk Web** URL + **`oc`** to read **admin** password from **Secret**. |
-| 3 | “**Install the Splunkbase TA**: tarball **`/your/path/add-on.tgz`**, namespace **`splunk-demo`**, pod **`splunk-lab-standalone-0`**.” | **`oc cp`**, **`splunk install app`**, **`splunk restart`** → **Apps** shows **Red Hat Advanced Cluster Security** (on disk often **`TA-stackrox`**). |
+| # | Say | Outcome (defaults) |
+|---|-----|--------------------|
+| 1 | Run a preflight check. | Read-only **`oc` / helm** checks from **`REFERENCE.md`**—cluster version, nodes, default **StorageClass**, **SCCs** including **nonroot-v2**, and whether **CRDs** can be created. **Nothing is installed.** |
+| 2 | Install Splunk for me. | **Splunk Operator** (Helm) + **Standalone** lab CR + **Route** (with **edge TLS** per the skill). You get **Splunk Web** URL and the **`oc`** line to read **admin** from **`splunk-lab-standalone-secret-v1`**. |
+| 3 | Install the TA for me. | **`oc cp`** the Splunkbase **`.tgz`** into the pod, **`splunk install app`**, **`splunk restart`**. After restart, **Apps** lists **Red Hat Advanced Cluster Security** (on disk often **`TA-stackrox`**). The archive must live on the same machine as **`oc`**; if the path is not obvious, answer **one** follow-up with the file location (e.g. under **`~/Downloads`** or **`~/code/Splunk`**). |
 
 Then configure **Central**, **API token**, and **Violations** in Splunk Web using **`SKILL.md`**. Do not commit **tokens** or **passwords** to this repo.
 
